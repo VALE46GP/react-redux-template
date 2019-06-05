@@ -1,7 +1,8 @@
+import * as constants from '../constants/index.js';
 
 const setUser = (state = null, action) => {
     switch (action.type) {
-        case 'USERS/SET_USER':
+        case constants.SET_USER:
             return action.user || state;
         default:
             return state;

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import Audience from '../schemas/audience';
 import User from '../schemas/user';
 
 mongoose.connect('mongodb://localhost:27017/watch-with-me');
@@ -8,84 +7,6 @@ const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => console.log('We\'re connected.'));
-
-const getUser = (username, cb) => {
-    User.find({ username: username })
-        .exec(cb);
-};
-
-const addMedia = (err, data) => {
-    if (err) return console.log(err);
-    const { user, watchlist, tmdb_id } = data;
-
-    // add media to user's watchlist
-    User.updateOne(
-        { username: user.username },
-        {
-            watchlist: watchlist,
-        },
-        null,
-        () => {
-            // update audience table
-            Audience.findOne(
-                {tmdb_id: tmdb_id},
-                (err, found) => {
-                    if (err) {
-                        console.log(err);
-                    } else if (found) {
-                        found.audience.push(user.username);
-                        found.save();
-                    } else {
-                        const newEntry = new Audience({
-                            tmdb_id: tmdb_id,
-                            audience: [user.username],
-                        });
-                        newEntry.save();
-                    }
-                }
-            );
-        }
-    );
-    console.log('watchlist updated in db');
-};
-
-const removeMedia = (err, data) => {
-    if (err) return console.log(err);
-    const { user, watchlist, tmdb_id } = data;
-
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> user = ', user.username);
-    // add media to user's watchlist
-    User.updateOne(
-        { username: user.username },
-        {
-            watchlist: watchlist,
-        },
-        null,
-        () => {
-            // update audience table
-            console.log('>> Must Update Audience <<');
-            Audience.findOne(
-                {tmdb_id: tmdb_id},
-                (err, found) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        let index = found.audience
-                            .findIndex(username => username === user.username);
-                        found.audience.splice(index, 1);
-                        console.log('>>>>>><<><><><><><><><> found.audience = ', found.audience);
-                        if (found.audience.length) {
-                            found.save();
-                        } else {
-                            found.delete();
-                        }
-                    }
-                }
-            );
-        }
-    );
-    console.log('item removed from watchlist');
-};
 
 /**
  * Register user and password
@@ -109,7 +30,6 @@ const registerUser = (err, data, res) => {
                 date_created: new Date(),
                 preferences: {},
                 friends: [],
-                watchlist: [],
             });
             newUser.save()
                 .then((user) => {
@@ -139,8 +59,5 @@ const login = (err, data, res) => {
     });
 };
 
-module.exports.getUser = getUser;
-module.exports.addMedia = addMedia;
-module.exports.removeMedia = removeMedia;
 module.exports.registerUser = registerUser;
 module.exports.login = login;

@@ -1,4 +1,4 @@
-import * as constants from '../constants/users';
+import * as constants from '../constants/index.js';
 
 /**
  * set user (used on login)

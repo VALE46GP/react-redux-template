@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import ControlsContainer from '../Controls/container';
-import ResultsContainer from '../Results/container';
+import ControlsContainer from '../Navigation/container';
+import ResultsContainer from '../Body/container';
 import LoginContainer from '../Login/container';
 import './index.css';
 
 class App extends Component {
 
     componentDidMount() {
-        // this.props.loadWatchlist();
-        this.props.handleModeChange('MODE/WATCHLIST');
     }
 
     render() {

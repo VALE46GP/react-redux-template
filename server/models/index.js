@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import User from '../schemas/user';
 
-mongoose.connect('mongodb://localhost:27017/watch-with-me');
+mongoose.connect('mongodb://localhost:27017/react-redux-template');
 
 const db = mongoose.connection;
 
